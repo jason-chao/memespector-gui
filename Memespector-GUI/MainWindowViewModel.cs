@@ -29,7 +29,7 @@ namespace Memespector_GUI
             OutputCsvFileLocation = Path.Join(userDataPath, sessionBaseFilename + ".csv");
         }
 
-        private GVClient gvClient = new GVClient();
+        private GVClientManager gvClient = new GVClientManager();
         public Window Parent { get; set; } = new Window(); // shall be set to the true parent (Window) of the view model.  it is necessnary to pass the parent window to a message dialog box.
 
         public ReactiveCommand<string, Unit> BrowseFile { get; }
@@ -37,7 +37,7 @@ namespace Memespector_GUI
         public ReactiveCommand<string, Unit> ShowMessageBox { get; }
         public ReactiveCommand<string, Unit> InvokeTargetAPI { get; }
 
-        private string userDataPath = Utilities.GetApplicationPath(); 
+        private string userDataPath = Utilities.GetApplicationPath();
         private string sessionBaseFilename = string.Format("gcv-api-{0:yyyyMMdd_HHmmss}", DateTime.Now);
 
         private string gcsCredentialFileLocation = Utilities.ReadConfig().GCSCredentialFileLocation;
@@ -169,6 +169,7 @@ namespace Memespector_GUI
                 }
 
                 gvClient.GoogleCloudCredentialsFile = gcsCredentialFileLocation;
+                gvClient.MaxThreads = Utilities.ReadConfig().MaxConcurrentAPICalls;
 
                 if (File.Exists(outputJsonFileLocation) || File.Exists(outputCsvFileLocation))
                 {
@@ -194,12 +195,13 @@ namespace Memespector_GUI
 
                 var featureDetecitonList = getSelectedFeatures();
                 var featureMaxResults = Utilities.GetConfigFeaturesMaxResults();
+                var flatteningMinScores = Utilities.GetConfigFlatteningMinScores();
 
                 var gvTaskList = new List<GVTask>();
 
                 foreach (var fileLocation in imageFileLocations)
                 {
-                    var gvTask = new GVTask() { ImageLocation = fileLocation, DetectionFeatureTypes = featureDetecitonList, FeatureMaxResults = featureMaxResults };
+                    var gvTask = new GVTask() { ImageLocation = fileLocation, DetectionFeatureTypes = featureDetecitonList, FeatureMaxResults = featureMaxResults, FlatteningMinScores = flatteningMinScores };
                     if (Utilities.IsFilePath(gvTask.ImageLocation))
                         gvTask.ImageLocationType = GVTask.LocationType.Local;
                     else if (Utilities.IsUrl(gvTask.ImageLocation))

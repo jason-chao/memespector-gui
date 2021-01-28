@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,13 +8,16 @@ using Google.Cloud.Vision.V1;
 
 namespace ResearchGVClient
 {
-    public class GVClient
+    public class GVClientManager
     {
-        public GVClient()
+        public GVClientManager()
         {
         }
 
         private string googleCloudCredentialsFilePath = string.Empty;
+
+        public int MaxThreads { get; set; } = 5;
+
         public string GoogleCloudCredentialsFile
         {
             get => googleCloudCredentialsFilePath;
@@ -42,18 +46,25 @@ namespace ResearchGVClient
 
         public async Task<IEnumerable<GVTask>> AnnotateImages(IEnumerable<GVTask> gvTasks)
         {
+            var queue = new ConcurrentQueue<int>(Enumerable.Range(0, gvTasks.Count()));
+
             List<Task> tasks = new List<Task>();
 
-            foreach(var gvTask in gvTasks)
+            for (int n = 0; n < MaxThreads; n++)
             {
-                tasks.Add(Task.Run(gvTask.GVAction));
+                tasks.Add(Task.Run(() =>
+                {
+                    while (queue.TryDequeue(out int gvTaskIndex)) {
+                        Task.Run(gvTasks.Skip(gvTaskIndex).First().GVAction).Wait();
+                    }
+                }));
             }
 
-            Task executionOfAllTasks = Task.WhenAll(tasks.ToArray());
+            Task concurrentTasks = Task.WhenAll(tasks.ToArray());
 
             try
             {
-                await executionOfAllTasks;
+                await concurrentTasks;
             }
             catch { }
 

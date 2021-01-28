@@ -18,7 +18,24 @@ namespace ResearchGVClient
         public DateTime? Processed { get; set; } = null;
         public AnnotateImageResponse AnnotationResponse { get; set; } = null;
         public ICollection<Feature.Types.Type> DetectionFeatureTypes { get; set; } = new List<Feature.Types.Type>();
-        public Dictionary<Feature.Types.Type, int> FeatureMaxResults { get; set; } = new Dictionary<Feature.Types.Type, int>();
+        public Dictionary<Feature.Types.Type, int> FeatureMaxResults { get; set; } = new Dictionary<Feature.Types.Type, int> {
+            { Feature.Types.Type.SafeSearchDetection, 0 },
+            { Feature.Types.Type.FaceDetection, 0 },
+            { Feature.Types.Type.LabelDetection, 0 },
+            { Feature.Types.Type.WebDetection, 0 },
+            { Feature.Types.Type.TextDetection, 0 },
+            { Feature.Types.Type.LandmarkDetection, 0 },
+            { Feature.Types.Type.LogoDetection, 0 }
+        };
+        public Dictionary<Feature.Types.Type, float> FlatteningMinScores { get; set; } = new Dictionary<Feature.Types.Type, float> {
+            { Feature.Types.Type.SafeSearchDetection, 0 },
+            { Feature.Types.Type.FaceDetection, 0 },
+            { Feature.Types.Type.LabelDetection, 0 },
+            { Feature.Types.Type.WebDetection, 0 },
+            { Feature.Types.Type.TextDetection, 0 },
+            { Feature.Types.Type.LandmarkDetection, 0 },
+            { Feature.Types.Type.LogoDetection, 0 }
+         };
 
         [JsonIgnore]
         public Exception ExceptionRasied { get; set; } = null;
@@ -113,24 +130,27 @@ namespace ResearchGVClient
                             }
                             break;
                         case Feature.Types.Type.LandmarkDetection:
-                            if (AnnotationResponse.LandmarkAnnotations.Any())
+                            var landmarkAnnotations = AnnotationResponse.LandmarkAnnotations.Where(a => a.Score >= FlatteningMinScores[Feature.Types.Type.LandmarkDetection]);
+                            if (landmarkAnnotations.Any())
                             {
-                                flatResult.Landmark_IDs = string.Join("; ", AnnotationResponse.LandmarkAnnotations.Select(l => l.Mid));
-                                flatResult.Landmark_Descriptions = string.Join("; ", AnnotationResponse.LandmarkAnnotations.Select(l => l.Description));
+                                flatResult.Landmark_IDs = string.Join("; ", landmarkAnnotations.Select(l => l.Mid));
+                                flatResult.Landmark_Descriptions = string.Join("; ", landmarkAnnotations.Select(l => l.Description));
                             }
                             break;
                         case Feature.Types.Type.LogoDetection:
-                            if (AnnotationResponse.LogoAnnotations.Any())
+                            var logoAnnotations = AnnotationResponse.LogoAnnotations.Where(a => a.Score >= FlatteningMinScores[Feature.Types.Type.LogoDetection]);
+                            if (logoAnnotations.Any())
                             {
-                                flatResult.Logo_IDs = string.Join("; ", AnnotationResponse.LogoAnnotations.Select(l => l.Mid));
-                                flatResult.Logo_Descriptions = string.Join("; ", AnnotationResponse.LogoAnnotations.Select(l => l.Description));
+                                flatResult.Logo_IDs = string.Join("; ", logoAnnotations.Select(l => l.Mid));
+                                flatResult.Logo_Descriptions = string.Join("; ", logoAnnotations.Select(l => l.Description));
                             }
                             break;
                         case Feature.Types.Type.LabelDetection:
-                            if (AnnotationResponse.LabelAnnotations.Any())
+                            var labelAnnotations = AnnotationResponse.LabelAnnotations.Where(a => a.Score >= FlatteningMinScores[Feature.Types.Type.LabelDetection]);
+                            if (labelAnnotations.Any())
                             {
-                                flatResult.Label_IDs = string.Join("; ", AnnotationResponse.LabelAnnotations.Select(l => l.Mid));
-                                flatResult.Label_Descriptions = string.Join("; ", AnnotationResponse.LabelAnnotations.Select(l => l.Description));
+                                flatResult.Label_IDs = string.Join("; ", labelAnnotations.Select(l => l.Mid));
+                                flatResult.Label_Descriptions = string.Join("; ", labelAnnotations.Select(l => l.Description));
                             }
                             break;
                         case Feature.Types.Type.TextDetection:
@@ -152,14 +172,16 @@ namespace ResearchGVClient
                         case Feature.Types.Type.WebDetection:
                             if (AnnotationResponse.WebDetection != null)
                             {
-                                flatResult.Web_Entity_IDs = string.Join("; ", AnnotationResponse.WebDetection.WebEntities.Select(l => l.EntityId));
-                                flatResult.Web_Entity_Descriptions = string.Join("; ", AnnotationResponse.WebDetection.WebEntities.Select(l => l.Description));
+                                float webMinScore = FlatteningMinScores[Feature.Types.Type.WebDetection];
+                                var webEntities = AnnotationResponse.WebDetection.WebEntities.Where(a => a.Score >= webMinScore);
+                                flatResult.Web_Entity_IDs = string.Join("; ", webEntities.Select(l => l.EntityId));
+                                flatResult.Web_Entity_Descriptions = string.Join("; ", webEntities.Select(l => l.Description));
 
                                 flatResult.Web_FullMatchingImages = string.Join(" ; ", AnnotationResponse.WebDetection.FullMatchingImages.Select(i => i.Url));
                                 flatResult.Web_PartialMatchingImages = string.Join(" ; ", AnnotationResponse.WebDetection.PartialMatchingImages.Select(i => i.Url));
                                 flatResult.Web_PagesWithFullMatchingImages = string.Join(" ; ", AnnotationResponse.WebDetection.PagesWithMatchingImages.Select(i => i.Url));
                                 flatResult.Web_VisuallySimilarImages = string.Join(" ; ", AnnotationResponse.WebDetection.VisuallySimilarImages.Select(i => i.Url));
-                                flatResult.Web_BestGuessLabels = string.Join(";", AnnotationResponse.WebDetection.BestGuessLabels.Select(l => l.Label));
+                                flatResult.Web_BestGuessLabels = string.Join("; ", AnnotationResponse.WebDetection.BestGuessLabels.Select(l => l.Label));
                             }
                             break;
                         default:
@@ -190,7 +212,7 @@ namespace ResearchGVClient
 
                 if (FeatureMaxResults.Keys.Contains(feature))
                 {
-                    if (FeatureMaxResults[feature] >= 0)
+                    if (FeatureMaxResults[feature] > 0)
                         newFeature.MaxResults = FeatureMaxResults[feature];
                 }
 

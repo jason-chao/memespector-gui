@@ -38,12 +38,12 @@ namespace ResearchGVClient
 
         public string Web_Entity_Descriptions { get; set; } = string.Empty;
         public string Web_Entity_IDs { get; set; } = string.Empty;
+        public string Web_BestGuessLabels { get; set; } = string.Empty;
 
         public string Web_FullMatchingImages { get; set; } = string.Empty;
         public string Web_PagesWithFullMatchingImages { get; set; } = string.Empty;
         public string Web_PartialMatchingImages { get; set; } = string.Empty;
         public string Web_VisuallySimilarImages { get; set; } = string.Empty;
-        public string Web_BestGuessLabels { get; set; } = string.Empty;
 
         public string Error { get; set; }
     }

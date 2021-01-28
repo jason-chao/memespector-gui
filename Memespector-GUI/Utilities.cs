@@ -19,17 +19,28 @@ namespace Memespector_GUI
         {
             var config = ReadConfig();
             return new Dictionary<Feature.Types.Type, int> {
-                { Feature.Types.Type.FaceDetection, config.FeatureMaxResults.Face },
-                { Feature.Types.Type.LabelDetection, config.FeatureMaxResults.Label },
-                { Feature.Types.Type.WebDetection, config.FeatureMaxResults.Web },
-                { Feature.Types.Type.LandmarkDetection, config.FeatureMaxResults.Landmark },
-                { Feature.Types.Type.LogoDetection, config.FeatureMaxResults.Logo }
+                { Feature.Types.Type.FaceDetection, config.Feature_MaxResults.Face },
+                { Feature.Types.Type.LabelDetection, config.Feature_MaxResults.Label },
+                { Feature.Types.Type.WebDetection, config.Feature_MaxResults.Web },
+                { Feature.Types.Type.LandmarkDetection, config.Feature_MaxResults.Landmark },
+                { Feature.Types.Type.LogoDetection, config.Feature_MaxResults.Logo }
+            };
+        }
+
+        static public Dictionary<Feature.Types.Type, float> GetConfigFlatteningMinScores()
+        {
+            var config = ReadConfig();
+            return new Dictionary<Feature.Types.Type, float> {
+                { Feature.Types.Type.LabelDetection, config.Feature_FlatteningMinScores.Label },
+                { Feature.Types.Type.WebDetection, config.Feature_FlatteningMinScores.Web },
+                { Feature.Types.Type.LandmarkDetection, config.Feature_FlatteningMinScores.Landmark },
+                { Feature.Types.Type.LogoDetection, config.Feature_FlatteningMinScores.Logo }
             };
         }
 
         static public Config ReadConfig()
         {
-            var configFilePath = Path.Join(GetApplicationPath(), "config.json");
+            var configFilePath = Path.Join(GetApplicationPath(), configBaseFilename);
             try
             {
                 return JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
@@ -44,7 +55,7 @@ namespace Memespector_GUI
 
         static public void WriteConfig(Config config)
         {
-            var configFilePath = Path.Join(GetApplicationPath(), "config.json");
+            var configFilePath = Path.Join(GetApplicationPath(), configBaseFilename);
             File.WriteAllText(configFilePath, JsonConvert.SerializeObject(config, Formatting.Indented));
         }
 
@@ -129,5 +140,7 @@ namespace Memespector_GUI
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8603 // Possible null reference return.
         }
+
+        static private string configBaseFilename = "config-memespector-gui.json";
     }
 }
