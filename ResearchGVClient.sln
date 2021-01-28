@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResearchGVClient", "GVClient\ResearchGVClient.csproj", "{C07EA061-293F-4BCB-A096-66788CC5CA54}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Memespector-GUI", "Memespector-GUI\Memespector-GUI.csproj", "{9534D1DE-7918-44E8-BECA-CA68726194D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C07EA061-293F-4BCB-A096-66788CC5CA54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C07EA061-293F-4BCB-A096-66788CC5CA54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C07EA061-293F-4BCB-A096-66788CC5CA54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C07EA061-293F-4BCB-A096-66788CC5CA54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9534D1DE-7918-44E8-BECA-CA68726194D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9534D1DE-7918-44E8-BECA-CA68726194D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9534D1DE-7918-44E8-BECA-CA68726194D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9534D1DE-7918-44E8-BECA-CA68726194D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7BCD8DE3-9032-4AAC-9D43-EF0CD7E980C7}
+	EndGlobalSection
+EndGlobal

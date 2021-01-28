@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>Assets\Google-Noto-Emoji-eye.ico</ApplicationIcon>
+    <Authors>Jason Chao</Authors>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Assets\Google-Noto-Emoji-eye.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Google-Noto-Emoji-eye.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+    <PackageReference Include="Google.Cloud.Vision.V1" Version="2.2.0">
+      <GeneratePathProperty>true</GeneratePathProperty>
+    </PackageReference>
+    <PackageReference Include="MessageBox.Avalonia" Version="1.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="ServiceStack.Text" Version="5.10.4" />
+   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GVClient\ResearchGVClient.csproj" />
+  </ItemGroup>
+</Project>

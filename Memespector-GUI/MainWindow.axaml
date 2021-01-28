@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
+        x:Class="Memespector_GUI.MainWindow"
+        WindowStartupLocation="CenterScreen"
+        Title="Memespector GUI">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Border Background="DarkOrange" Grid.Row="0" Grid.Column="0" Padding="0, 25, 0, 20">
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Label FontSize="40" FontWeight="DemiBold" Foreground="White" Content="Memespector GUI" HorizontalContentAlignment="Center" />
+        <Label FontSize="20" Foreground="White" Margin="0, 8, 0, 0" Content="Graphical User Interface Client for Google Cloud Vision API" HorizontalContentAlignment="Center" />
+      </StackPanel>
+    </Border>
+    <Label FontSize="18" Grid.Row="1" FontWeight="Bold" Content="Settings" Margin="20, 20, 0, 0" />
+    <Grid Grid.Row="2" Grid.Column="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="300" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="130" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Label FontSize="16" Grid.Row="0" Grid.Column="0" Content="Google Cloud credential file" Margin="30, 10, 0, 0" VerticalAlignment="Center" />
+      <TextBox IsEnabled="{Binding IsInputEnabled}" Text="{Binding GCSCredentialFileLocation}" Grid.Row="0" Grid.Column="1" Margin="0, 0, 20, 0" VerticalAlignment="Center" />
+      <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Command="{Binding BrowseFile}" CommandParameter="GCSCredentialFileLocation" IsEnabled="{Binding IsInputEnabled}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 30, 0" />
+      <Label FontSize="16" Grid.Row="1" Grid.Column="0" Content="Features" Margin="30, 10, 0, 0" VerticalAlignment="Center" />
+      <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0, 10, 0, 0"  VerticalAlignment="Center" >
+        <CheckBox Content="Safety" IsChecked="{Binding Detection_Safety}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Face" IsChecked="{Binding Detection_Face}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Label" IsChecked="{Binding Detection_Label}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Web" IsChecked="{Binding Detection_Web}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Text" IsChecked="{Binding Detection_Text}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Landmark" IsChecked="{Binding Detection_Landmark}" IsEnabled="{Binding IsInputEnabled}" />
+        <CheckBox Content="Logo" IsChecked="{Binding Detection_Logo}" IsEnabled="{Binding IsInputEnabled}" />
+      </StackPanel>
+    </Grid>
+    <Label FontSize="18" Grid.Row="3" Grid.Column="0" FontWeight="Bold" Content="Image locations" Margin="20, 20, 0, 0" />
+    <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="30, 10, 0, 0" HorizontalAlignment="Left">
+      <Label Content="Add images from  " FontSize="15" VerticalAlignment="Center" />
+      <Button Content="files on this computer" Command="{Binding BrowseFile}" CommandParameter="ImageFileLocations_Files" IsEnabled="{Binding IsInputEnabled}" FontSize="15" Margin="0, 0, 10, 0" />
+      <Button Content="a folder on this computer" IsEnabled="{Binding IsInputEnabled}" Command="{Binding BrowseFile}" CommandParameter="ImageFileLocations_Folder" FontSize="15" Margin="0, 0, 10, 0" />
+      <Button Content="the web" FontSize="16" Command="{Binding ShowMessageBox}" CommandParameter="WebImages" IsEnabled="{Binding IsInputEnabled}" Margin="0, 0, 10, 0" />
+    </StackPanel>
+    <TextBox Text="{Binding ImageFileLocations}" IsReadOnly="{Binding !IsInputEnabled}" Grid.Row="5" VerticalAlignment="Stretch" AcceptsReturn="True" TextWrapping="Wrap" Margin="30, 10, 30, 0" />
+    <Label FontSize="18" Grid.Row="6" Grid.Column="0" FontWeight="Bold" Content="Output" Margin="20, 20, 0, 0" />
+    <Grid Grid.Row="7" Grid.Column="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="300" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="130" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Label FontSize="16" Grid.Row="0" Grid.Column="0" Content="JSON file (full results)" Margin="30, 10, 0, 0" VerticalAlignment="Center" />
+      <TextBox Text="{Binding OutputJsonFileLocation}" IsEnabled="{Binding IsInputEnabled}" Grid.Row="0" Grid.Column="1" Margin="0, 10, 20, 0" VerticalAlignment="Center" />
+      <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Command="{Binding BrowseFile}" CommandParameter="OutputJsonFileLocation" IsEnabled="{Binding IsInputEnabled}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 10, 30, 0" />
+      <Label FontSize="16" Grid.Row="1" Grid.Column="0" Content="CSV file (simplified results)" Margin="30, 10, 0, 0" VerticalAlignment="Center" />
+      <TextBox Text="{Binding OutputCsvFileLocation}" IsEnabled="{Binding IsInputEnabled}" Grid.Row="1" Grid.Column="1" Margin="0, 10, 20, 0" VerticalAlignment="Center" />
+      <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Command="{Binding BrowseFile}" CommandParameter="OutputCsvFileLocation" IsEnabled="{Binding IsInputEnabled}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 10, 30, 0" />
+    </Grid>
+    <Label FontSize="18" Grid.Row="8" Grid.Column="0" FontWeight="Bold" Content="Invocation" Margin="20, 20, 0, 0" />
+    <StackPanel Grid.Row="9" Orientation="Horizontal" Margin="30, 10, 0, 20" HorizontalAlignment="Center">
+      <Button Content="Invoke Google Cloud Vision API" Command="{Binding InvokeTargetAPI}" CommandParameter="GoogleCloudVisionAPIV1" IsEnabled="{Binding IsInputEnabled}" IsVisible="{Binding !IsInvocationInProgress}" FontSize="18" Background="steelblue" Foreground="White" Margin="0, 0, 0, 0" Padding="20, 15, 20, 15" />
+      <Label Content="{Binding ProgressMessage}" IsVisible="{Binding IsInvocationInProgress}" Foreground="SteelBlue" FontSize="22" VerticalContentAlignment="Center" Margin="0, 0, 0, 0" Padding="20, 15, 20, 15" />
+    </StackPanel>
+    <!--{Binding ProgressValue}-->
+    <ProgressBar Grid.Row="10" Grid.Column="0" IsVisible="{Binding IsInvocationInProgress}" Value="{Binding ProgressValue}" Height="7" Foreground="steelblue" />
+    <Border Background="DarkOrange" Grid.Row="11" Grid.Column="0" Padding="0, 10, 0, 10">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <Button Content="About" Command="{Binding ShowMessageBox}" CommandParameter="About" Foreground="White" Background="DarkOrange" Padding="0, 0, 0, 0" Margin="0, 0, 20, 0" />
+        <Button Content="Github" Command="{Binding OpenExternal}" CommandParameter="Github" Foreground="White" Background="DarkOrange" Padding="0, 0, 0, 0" Margin="0, 0, 30, 0" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</Window>
