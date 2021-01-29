@@ -4,7 +4,7 @@ Memespector GUI is a cross-platform client for [Google Cloud Vision API](https:/
 
 Memespector GUI is built using .net core and supports Windows, Mac OS and Linux.
 
-![Screen shot](doc\res\memespector-gui-screenshot-mac.png)
+![Screen shot](doc/res/memespector-gui-screenshot-mac.png)
 
 # Installation
 
