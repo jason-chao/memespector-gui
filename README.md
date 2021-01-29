@@ -6,7 +6,7 @@ Memespector GUI is built using .net core and supports Windows, Mac OS and Linux.
 
 ![Screen shot](doc/res/memespector-gui-screenshot-mac.png)
 
-# Installation
+# Set-up
 
 1. Download [the latest release](https://github.com/jason-chao/memespector-gui/releases/tag/0.0.1beta) for the respective operating system.  Just open the executable file inside the zip file.
 
