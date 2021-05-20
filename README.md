@@ -1,6 +1,6 @@
 # Memespector-GUI
 
-Memespector-GUI is a cross-platform client for computer vision APIs with a graphical user interface.  Memespector-GUI supports [Google Cloud Vision API](https://cloud.google.com/vision/), [Microsoft Cognitive Services Computer Vision](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/), [Clarifai Computer Vision](https://www.clarifai.com/) and an API for open soruce computer vision models.
+Memespector-GUI is a cross-platform client for computer vision APIs with a graphical user interface.  Memespector-GUI supports [Google Cloud Vision API](https://cloud.google.com/vision/), [Microsoft Azure Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/), [Clarifai Computer Vision](https://www.clarifai.com/) and an API for open soruce computer vision models.
 
 Memespector-GUI runs on Windows, Mac OS and Linux.
 
@@ -10,7 +10,7 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
 * [Set-up](#set-up)
   * Get authentication keys from
     * [Google Vision](doc/GetKeyFromGoogleCloud.md)
-    * [Microsoft Azure Cognitive Services Computer Vision](doc/GetKeyFromMicrosoftAzure.md)
+    * [Microsoft Azure Cognitive Services](doc/GetKeyFromMicrosoftAzure.md)
     * [Clarifai Computer Vision](doc/GetKeyFromClarifai.md)
 * [Usage](#usage)
   * [Change API settings](#change-api-settings)
