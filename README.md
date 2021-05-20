@@ -6,6 +6,8 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
 
 ![Screenshot](doc/res/memespector-gui-screenshot-mac.png)
 
+If you use this tool in a scientific scientific publication, please cite it, e.g. in APA style: *Chao, T. H. J. (2021). Memespector GUI: Graphical User Interface Client for Computer Vision APIs (Version 0.2) [Software]. Available from https://github.com/jason-chao/memespector-gui.*
+
 # Contents
 * [Download](#download)
 * [Gaining access to APIs](#gaining-access-to-apis)
@@ -183,7 +185,3 @@ Developed by [Jason Chao](https://jasontc.net/).
 Special thanks to [Janna Joceli Omena](https://github.com/jannajoceli) for her efforts in idea generation and software testing.
 
 Inspired by the original memespector projects of [bernorieder](https://github.com/bernorieder/memespector) and [amintz](https://github.com/amintz/memespector-python).
-
-# Licence
-
-MIT

@@ -28,12 +28,11 @@ namespace Memespector_GUI
             ShowMessageBox = ReactiveCommand.Create<string>(doShowMessageBox);
             InvokeTargetAPI = ReactiveCommand.Create<string>(doInvokeTargetAPI);
 
-            OutputJsonFileLocation = Path.Join(Utilities.MemespectorConfig.DirectoryForJSON, sessionBaseFilename + ".json");
-            OutputCsvFileLocation = Path.Join(Utilities.MemespectorConfig.DirectoryForCSV, sessionBaseFilename + ".csv");
+            OutputJsonFileLocation = Path.Join(defaultDataPath, sessionBaseFilename + ".json");
+            OutputCsvFileLocation = Path.Join(defaultDataPath, sessionBaseFilename + ".csv");
 
             this.WhenAnyValue(x => x.IsGoogleVisionEnabled, x => x.IsMicrosoftAuzreEnabled, x => x.IsClarifaiEnabled, x => x.IsOpenSourceEnabled).Subscribe(_ => saveUIStateToConfig());
             this.WhenAnyValue(x => x.GoogleVisionSettings.CredentialFileLocation, x => x.MicrosoftAzureSettings.Endpoint, x => x.MicrosoftAzureSettings.SubscriptionKey, x => x.ClarifaiSettings.APIKey, x => x.OpenSourceSettings.Endpoint).Subscribe(_ => saveUIStateToConfig());
-            this.WhenAnyValue(x => x.OutputJsonFileLocation, x => x.OutputCsvFileLocation).Subscribe(_ => saveUIStateToConfig());
         }
 
         private CVClientManager gvClient = new CVClientManager();
@@ -97,9 +96,6 @@ namespace Memespector_GUI
             config.SelectedMicrosoftAzure = isMicrosoftAuzreEnabled;
             config.SelectedClarifai = isClarifaiEnabled;
             config.SelectedOpenSource = isOpenSourceEnabled;
-
-            config.DirectoryForJSON = (new FileInfo(outputJsonFileLocation)).DirectoryName;
-            config.DirectoryForCSV = (new FileInfo(outputCsvFileLocation)).DirectoryName;
 
             Utilities.WriteConfig(config);
         }

@@ -24,9 +24,6 @@ namespace Memespector_GUI
         public GoogleFeatureMinScores GoogleVision_CSV_MinScores { get; set; } = new GoogleFeatureMinScores();
         public MicrosoftFeatureMinScores MicrosoftAzure_CSV_MinScores { get; set; } = new MicrosoftFeatureMinScores();
 
-        public string DirectoryForCSV { get; set; } = Utilities.GetApplicationPath();
-        public string DirectoryForJSON { get; set; } = Utilities.GetApplicationPath();
-
         public float ClarifaiMinScore { get; set; } = 0;
         public float OpenSourceMinScore { get; set; } = 0;
         public int OpenSourceMaxResults { get; set; } = 10;
