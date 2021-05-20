@@ -13,7 +13,7 @@ Memespector GUI supports Windows, Mac OS and Linux.
 2. You have to get authentication keys from Google Cloud, Microsoft Azure and Clarifai in order to use their APIs.
 
    1. If you wish to use Google Vision API, you must obtain a credential key file from Google Cloud.  See [the instructions on how to activate Google Cloud Service and obtain an authentication file](doc/GetKeyFromGoogleCloud.md).
-   2. If you wish to use Microsoft Cognitive Services Computer Vision, you must obtain a service endpoint and subscription key from Google Cloud.  See [the instructions on how to activate Microsoft Azure and obtain authentication keys](doc/GetKeyFromMicrosoftAuzre.md).
+   2. If you wish to use Microsoft Cognitive Services Computer Vision, you must obtain a service endpoint and subscription key from Microsoft Azure.  See [the instructions on how to activate Microsoft Azure and obtain authentication keys](doc/GetKeyFromMicrosoftAzure.md).
    3. If you wish to use Clarifai Computer Vision, you must obtain an API key from Clarifai. See [the instructions on how to obtain an API key](doc/GetKeyFromClarifai.md).  
 
 # Usage
