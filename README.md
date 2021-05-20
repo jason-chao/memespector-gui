@@ -30,7 +30,7 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
 
 Downlaod [the latest version of Memespector-GUI for Windows, Mac OS or Linux](https://github.com/jason-chao/memespector-gui/releases/).
 
-When you open Memespector-GUI for the first time on Windows or Mac, the operating system may decline to run Memespector-GUI because of tightened security measures.  If this happens, please follow [the instructions on how to unblock Memespector-GUI at first launch on Windows and Mac](doc/FirstRun.md).
+When you open Memespector-GUI for the first time on Windows or Mac, the operating system may decline to run Memespector-GUI because of tightened security measures.  If this happens, please follow [the instructions on how to allow Memespector-GUI to run at first launch on Windows and Mac](doc/FirstRun.md).
 
 # Gaining access to APIs
 

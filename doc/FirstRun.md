@@ -1,4 +1,4 @@
-# Opening Memespector-GUI for the first time
+# Allowing Memespector-GUI to run at first launch
 
 When you open Memespector-GUI for the first time on Windows or Mac, the operating system may decline to run Memespector-GUI because of tightened security measures.  You have to take some extra steps to ask Windows or Mac to allow Memespector-GUI to run on your computer.
 
