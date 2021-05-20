@@ -10,53 +10,75 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Google.Cloud.Vision.V1;
 using MessageBox.Avalonia;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace Memespector_GUI
 {
     static public class Utilities
     {
-        static public Dictionary<Feature.Types.Type, int> GetConfigFeaturesMaxResults()
+        static private MemespectorConfig? memespectorConfig = null;
+        static public MemespectorConfig MemespectorConfig
         {
-            var config = ReadConfig();
+            get
+            {
+                if (memespectorConfig == null)
+                {
+                    try
+                    {
+                        var configFilePath = Path.Join(GetApplicationPath(), configBaseFilename);
+                        memespectorConfig = JsonConvert.DeserializeObject<MemespectorConfig>(File.ReadAllText(configFilePath));
+                    }
+                    catch
+                    {
+                        memespectorConfig = new MemespectorConfig();
+                        WriteConfig(memespectorConfig);
+                    }
+                }
+                return memespectorConfig;
+            }
+        }
+
+        static public Dictionary<VisualFeatureTypes, float> GetConfigMicrosoftAzureFlatteningMinScores()
+        {
+            var config = MemespectorConfig;
+            return new Dictionary<VisualFeatureTypes, float> {
+                { VisualFeatureTypes.Categories, config.MicrosoftAzure_CSV_MinScores.Categories },
+                { VisualFeatureTypes.Description, config.MicrosoftAzure_CSV_MinScores.Description },
+                { VisualFeatureTypes.Tags, config.MicrosoftAzure_CSV_MinScores.Tags },
+                { VisualFeatureTypes.Brands, config.MicrosoftAzure_CSV_MinScores.Brands },
+                { VisualFeatureTypes.Objects, config.MicrosoftAzure_CSV_MinScores.Objects }
+            };
+        }
+
+        static public Dictionary<Feature.Types.Type, int> GetConfigGoogleVisionMaxResults()
+        {
+            var config = MemespectorConfig;
             return new Dictionary<Feature.Types.Type, int> {
-                { Feature.Types.Type.FaceDetection, config.Feature_MaxResults.Face },
-                { Feature.Types.Type.LabelDetection, config.Feature_MaxResults.Label },
-                { Feature.Types.Type.WebDetection, config.Feature_MaxResults.Web },
-                { Feature.Types.Type.LandmarkDetection, config.Feature_MaxResults.Landmark },
-                { Feature.Types.Type.LogoDetection, config.Feature_MaxResults.Logo }
+                { Feature.Types.Type.FaceDetection, config.GoogleVision_MaxResults.Face },
+                { Feature.Types.Type.LabelDetection, config.GoogleVision_MaxResults.Label },
+                { Feature.Types.Type.WebDetection, config.GoogleVision_MaxResults.Web },
+                { Feature.Types.Type.LandmarkDetection, config.GoogleVision_MaxResults.Landmark },
+                { Feature.Types.Type.LogoDetection, config.GoogleVision_MaxResults.Logo }
             };
         }
 
-        static public Dictionary<Feature.Types.Type, float> GetConfigFlatteningMinScores()
+        static public Dictionary<Feature.Types.Type, float> GetConfigGoogleVisionFlatteningMinScores()
         {
-            var config = ReadConfig();
+            var config = MemespectorConfig;
             return new Dictionary<Feature.Types.Type, float> {
-                { Feature.Types.Type.LabelDetection, config.Feature_FlatteningMinScores.Label },
-                { Feature.Types.Type.WebDetection, config.Feature_FlatteningMinScores.Web },
-                { Feature.Types.Type.LandmarkDetection, config.Feature_FlatteningMinScores.Landmark },
-                { Feature.Types.Type.LogoDetection, config.Feature_FlatteningMinScores.Logo }
+                { Feature.Types.Type.LabelDetection, config.GoogleVision_CSV_MinScores.Label },
+                { Feature.Types.Type.WebDetection, config.GoogleVision_CSV_MinScores.Web },
+                { Feature.Types.Type.LandmarkDetection, config.GoogleVision_CSV_MinScores.Landmark },
+                { Feature.Types.Type.LogoDetection, config.GoogleVision_CSV_MinScores.Logo },
+                { Feature.Types.Type.FaceDetection, config.GoogleVision_CSV_MinScores.Face }
             };
         }
 
-        static public Config ReadConfig()
-        {
-            var configFilePath = Path.Join(GetApplicationPath(), configBaseFilename);
-            try
-            {
-                return JsonConvert.DeserializeObject<Config>(File.ReadAllText(configFilePath));
-            }
-            catch
-            {
-                var newConfig = new Config();
-                WriteConfig(newConfig);
-                return newConfig;
-            }
-        }
-
-        static public void WriteConfig(Config config)
+        static public void WriteConfig(MemespectorConfig config)
         {
             var configFilePath = Path.Join(GetApplicationPath(), configBaseFilename);
             File.WriteAllText(configFilePath, JsonConvert.SerializeObject(config, Formatting.Indented));
+            memespectorConfig = config;
         }
 
         static public bool IsFilePath(string filename)

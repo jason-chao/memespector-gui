@@ -1,0 +1,46 @@
+[
+  {
+    "Title": "VGG16 (ImageNet)",
+    "ModelId": "VGG16"
+  },
+  {
+    "Title": "VGG19 (ImageNet)",
+    "ModelId": "VGG19"
+  },
+  {
+    "Title": "ResNet50 (ImageNet)",
+    "ModelId": "ResNet50"
+  },
+  {
+    "Title": "ResNet152V2 (ImageNet)",
+    "ModelId": "ResNet152V2"
+  },
+  {
+    "Title": "Xception (ImageNet)",
+    "ModelId": "Xception"
+  },
+  {
+    "Title": "InceptionV3 (ImageNet)",
+    "ModelId": "InceptionV3"
+  },
+  {
+    "Title": "InceptionResNetV2 (ImageNet)",
+    "ModelId": "InceptionResNetV2"
+  },
+  {
+    "Title": "MobileNetV2 (ImageNet)",
+    "ModelId": "MobileNetV2"
+  },
+  {
+    "Title": "EfficientNetB7 (ImageNet)",
+    "ModelId": "EfficientNetB7"
+  },
+  {
+    "Title": "NASNetLarge (ImageNet)",
+    "ModelId": "NASNetLarge"
+  },
+  {
+    "Title": "DenseNet201 (ImageNet)",
+    "ModelId": "DenseNet201"
+  }
+]

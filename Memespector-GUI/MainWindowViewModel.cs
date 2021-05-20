@@ -10,9 +10,11 @@ using System.Linq;
 using System.IO;
 using MessageBox.Avalonia.Models;
 using Google.Cloud.Vision.V1;
-using ResearchGVClient;
+using CVClient;
 using Newtonsoft.Json;
 using ServiceStack.Text;
+using Memespector_GUI.APIViewModels;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace Memespector_GUI
 {
@@ -20,43 +22,47 @@ namespace Memespector_GUI
     {
         public MainWindowViewModel()
         {
+
             BrowseFile = ReactiveCommand.Create<string>(doBrowseFile);
             OpenExternal = ReactiveCommand.Create<string>(doOpenExternal);
             ShowMessageBox = ReactiveCommand.Create<string>(doShowMessageBox);
             InvokeTargetAPI = ReactiveCommand.Create<string>(doInvokeTargetAPI);
 
-            OutputJsonFileLocation = Path.Join(userDataPath, sessionBaseFilename + ".json");
-            OutputCsvFileLocation = Path.Join(userDataPath, sessionBaseFilename + ".csv");
+            OutputJsonFileLocation = Path.Join(Utilities.MemespectorConfig.DirectoryForJSON, sessionBaseFilename + ".json");
+            OutputCsvFileLocation = Path.Join(Utilities.MemespectorConfig.DirectoryForCSV, sessionBaseFilename + ".csv");
+
+            this.WhenAnyValue(x => x.IsGoogleVisionEnabled, x => x.IsMicrosoftAuzreEnabled, x => x.IsClarifaiEnabled, x => x.IsOpenSourceEnabled).Subscribe(_ => saveUIStateToConfig());
+            this.WhenAnyValue(x => x.GoogleVisionSettings.CredentialFileLocation, x => x.MicrosoftAzureSettings.Endpoint, x => x.MicrosoftAzureSettings.SubscriptionKey, x => x.ClarifaiSettings.APIKey, x => x.OpenSourceSettings.Endpoint).Subscribe(_ => saveUIStateToConfig());
+            this.WhenAnyValue(x => x.OutputJsonFileLocation, x => x.OutputCsvFileLocation).Subscribe(_ => saveUIStateToConfig());
         }
 
-        private GVClientManager gvClient = new GVClientManager();
+        private CVClientManager gvClient = new CVClientManager();
         public Window Parent { get; set; } = new Window(); // shall be set to the true parent (Window) of the view model.  it is necessnary to pass the parent window to a message dialog box.
+
+        public GoogleVisionSettingsViewModel GoogleVisionSettings { get; set; } = new GoogleVisionSettingsViewModel();
+        public MicrosoftAzureSettingsViewModel MicrosoftAzureSettings { get; set; } = new MicrosoftAzureSettingsViewModel();
+        public ClarifaiSettingsViewModel ClarifaiSettings { get; set; } = new ClarifaiSettingsViewModel();
+        public OpenSourceSettingsViewModel OpenSourceSettings { get; set; } = new OpenSourceSettingsViewModel();
 
         public ReactiveCommand<string, Unit> BrowseFile { get; }
         public ReactiveCommand<string, Unit> OpenExternal { get; }
         public ReactiveCommand<string, Unit> ShowMessageBox { get; }
         public ReactiveCommand<string, Unit> InvokeTargetAPI { get; }
 
-        private string userDataPath = Utilities.GetApplicationPath();
-        private string sessionBaseFilename = string.Format("gcv-api-{0:yyyyMMdd_HHmmss}", DateTime.Now);
+        private string defaultDataPath = Utilities.GetApplicationPath();
+        private string sessionBaseFilename = string.Format("cv-apis-{0:yyyyMMdd_HHmmss}", DateTime.Now);
 
-        private string gcsCredentialFileLocation = Utilities.ReadConfig().GCSCredentialFileLocation;
-        public string GCSCredentialFileLocation { get => gcsCredentialFileLocation; set => this.RaiseAndSetIfChanged(ref gcsCredentialFileLocation, value); }
+        private bool isGoogleVisionEnabled = Utilities.MemespectorConfig.SelectedGoogleVision;
+        public bool IsGoogleVisionEnabled { get => isGoogleVisionEnabled; set => this.RaiseAndSetIfChanged(ref isGoogleVisionEnabled, value); }
 
-        private bool detection_Safety = true;
-        public bool Detection_Safety { get => detection_Safety; set => this.RaiseAndSetIfChanged(ref detection_Safety, value); }
-        private bool detection_Face = true;
-        public bool Detection_Face { get => detection_Face; set => this.RaiseAndSetIfChanged(ref detection_Face, value); }
-        private bool detection_Label = true;
-        public bool Detection_Label { get => detection_Label; set => this.RaiseAndSetIfChanged(ref detection_Label, value); }
-        private bool detection_Web = true;
-        public bool Detection_Web { get => detection_Web; set => this.RaiseAndSetIfChanged(ref detection_Web, value); }
-        private bool detection_Text = true;
-        public bool Detection_Text { get => detection_Text; set => this.RaiseAndSetIfChanged(ref detection_Text, value); }
-        private bool detection_Landmark = true;
-        public bool Detection_Landmark { get => detection_Landmark; set => this.RaiseAndSetIfChanged(ref detection_Landmark, value); }
-        private bool detection_Logo = true;
-        public bool Detection_Logo { get => detection_Logo; set => this.RaiseAndSetIfChanged(ref detection_Logo, value); }
+        private bool isMicrosoftAuzreEnabled = Utilities.MemespectorConfig.SelectedMicrosoftAzure;
+        public bool IsMicrosoftAuzreEnabled { get => isMicrosoftAuzreEnabled; set => this.RaiseAndSetIfChanged(ref isMicrosoftAuzreEnabled, value); }
+
+        private bool isClarifaiEnabled = Utilities.MemespectorConfig.SelectedClarifai;
+        public bool IsClarifaiEnabled { get => isClarifaiEnabled; set => this.RaiseAndSetIfChanged(ref isClarifaiEnabled, value); }
+
+        private bool isOpenSourceEnabled = Utilities.MemespectorConfig.SelectedOpenSource;
+        public bool IsOpenSourceEnabled { get => isOpenSourceEnabled; set => this.RaiseAndSetIfChanged(ref isOpenSourceEnabled, value); }
 
         private string imageFileLocations = string.Empty;
         public string ImageFileLocations { get => imageFileLocations; set => this.RaiseAndSetIfChanged(ref imageFileLocations, value); }
@@ -77,6 +83,27 @@ namespace Memespector_GUI
         private bool isInputEnabled = true;
         public bool IsInputEnabled { get => isInputEnabled; set => this.RaiseAndSetIfChanged(ref isInputEnabled, value); }
 
+        private void saveUIStateToConfig()
+        {
+            var config = Utilities.MemespectorConfig;
+
+            config.GoogleCloudCredentialFileLocation = GoogleVisionSettings.CredentialFileLocation;
+            config.MicrosoftAzureEndpoint = MicrosoftAzureSettings.Endpoint;
+            config.MicrosoftAzureSubscriptionKey = MicrosoftAzureSettings.SubscriptionKey;
+            config.ClarifaiAPIKey = ClarifaiSettings.APIKey;
+            config.OpenSourceEndpoint = OpenSourceSettings.Endpoint;
+
+            config.SelectedGoogleVision = isGoogleVisionEnabled;
+            config.SelectedMicrosoftAzure = isMicrosoftAuzreEnabled;
+            config.SelectedClarifai = isClarifaiEnabled;
+            config.SelectedOpenSource = isOpenSourceEnabled;
+
+            config.DirectoryForJSON = (new FileInfo(outputJsonFileLocation)).DirectoryName;
+            config.DirectoryForCSV = (new FileInfo(outputCsvFileLocation)).DirectoryName;
+
+            Utilities.WriteConfig(config);
+        }
+
         private void cleanimageFileLocationList()
         {
             ImageFileLocations = string.Join(Environment.NewLine, imageFileLocations.Split(Environment.NewLine).Select(l => l.Trim()).Distinct().Where(l => (Utilities.IsFilePath(l) || Utilities.IsUrl(l)) && !string.IsNullOrEmpty(l)));
@@ -86,10 +113,9 @@ namespace Memespector_GUI
         {
             if (parameter == "Github")
             {
-                Utilities.OpenExternalUrl("https://www.github.com/jason-chao/");
+                Utilities.OpenExternalUrl("https://github.com/jason-chao/memespector-gui");
             }
         }
-
 
         private async void doShowMessageBox(string parameter)
         {
@@ -104,13 +130,11 @@ namespace Memespector_GUI
                     ButtonDefinitions = MessageBox.Avalonia.Enums.ButtonEnum.Ok,
                     ContentTitle = "About Memespector GUI",
                     HyperlinkContentProvider = new[] {
-                    new HyperlinkContent { Alias = "GUI client for " },
-                    new HyperlinkContent { Alias = "Google Cloud Vision API", Url="https://cloud.google.com/vision/docs" },
-                    new HyperlinkContent { Alias = " for research purposes by " },
+                    new HyperlinkContent { Alias = "GUI client for computer vision APIs by " },
                     new HyperlinkContent { Alias = "Jason CHAO", Url="https://jasontc.net/" }, new HyperlinkContent { Alias = ". " },
                     new HyperlinkContent { Alias = "Inspired by the original command-line memespector projects of " },
                     new HyperlinkContent { Alias = "bernorieder ", Url = "https://github.com/bernorieder/memespector" },
-                    new HyperlinkContent { Alias = $"and " },
+                    new HyperlinkContent { Alias = "and " },
                     new HyperlinkContent { Alias = "amintz", Url = "https://github.com/amintz/memespector-python" } },
                     Icon = MessageBox.Avalonia.Enums.Icon.Info,
                     WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -120,29 +144,57 @@ namespace Memespector_GUI
             }
         }
 
-        private List<Feature.Types.Type> getSelectedFeatures()
+        private List<VisualFeatureTypes?> getSelectedMicrosoftAzureFeatures()
+        {
+            var list = new List<VisualFeatureTypes?>();
+
+            if (MicrosoftAzureSettings.Detection_Adult)
+                list.Add(VisualFeatureTypes.Adult);
+
+            if (MicrosoftAzureSettings.Detection_Brands)
+                list.Add(VisualFeatureTypes.Brands);
+
+            if (MicrosoftAzureSettings.Detection_Categories)
+                list.Add(VisualFeatureTypes.Categories);
+
+            if (MicrosoftAzureSettings.Detection_Description)
+                list.Add(VisualFeatureTypes.Description);
+
+            if (MicrosoftAzureSettings.Detection_Faces)
+                list.Add(VisualFeatureTypes.Faces);
+
+            if (MicrosoftAzureSettings.Detection_Objects)
+                list.Add(VisualFeatureTypes.Objects);
+
+            if (MicrosoftAzureSettings.Detection_Tags)
+                list.Add(VisualFeatureTypes.Tags);
+
+            return list;
+        }
+
+        private List<Feature.Types.Type> getSelectedGoogleVisionFeatures()
         {
             var list = new List<Feature.Types.Type>();
 
-            if (detection_Safety)
+            if (GoogleVisionSettings.Detection_Safety)
                 list.Add(Feature.Types.Type.SafeSearchDetection);
 
-            if (detection_Face)
+            if (GoogleVisionSettings.Detection_Face)
                 list.Add(Feature.Types.Type.FaceDetection);
 
-            if (detection_Label)
+            if (GoogleVisionSettings.Detection_Label)
                 list.Add(Feature.Types.Type.LabelDetection);
 
-            if (detection_Web)
+            if (GoogleVisionSettings.Detection_Web)
                 list.Add(Feature.Types.Type.WebDetection);
 
-            if (detection_Text)
+            if (GoogleVisionSettings.Detection_Text)
                 list.Add(Feature.Types.Type.TextDetection);
 
-            if (detection_Landmark)
+            if (GoogleVisionSettings.Detection_Landmark)
                 list.Add(Feature.Types.Type.LandmarkDetection);
 
-            if (detection_Logo)
+            if (GoogleVisionSettings.Detection_Logo)
                 list.Add(Feature.Types.Type.LogoDetection);
 
             return list;
@@ -150,26 +202,82 @@ namespace Memespector_GUI
 
         private async void doInvokeTargetAPI(string parameter)
         {
-            if (parameter == "GoogleCloudVisionAPIV1")
+            var settings = GoogleVisionSettings;
+
+            if (parameter == "AllAPIs")
             {
                 IsInputEnabled = false;
 
-                if (!File.Exists(gcsCredentialFileLocation))
+                if ((new bool[] { isGoogleVisionEnabled, isMicrosoftAuzreEnabled, isClarifaiEnabled, isOpenSourceEnabled }).Where(apiEnabled => apiEnabled).Count() <= 0)
                 {
-                    Utilities.ShowErrorDialog("Credential file", "The Google Cloud credential file has not been chosen or does not exist.  Please select a Google Cloud credential file.", Parent);
+                    Utilities.ShowErrorDialog("API settings", "No API is selected.  Please select at least one API.", Parent);
                     IsInputEnabled = true;
                     return;
                 }
 
-                if (!GVCommon.MayBeAValidGCSCredentialFile(gcsCredentialFileLocation))
+                if (isGoogleVisionEnabled)
                 {
-                    Utilities.ShowErrorDialog("Credential file", "The Google Cloud credential file is invalid.  Please select a valid Google Cloud credential file.", Parent);
-                    IsInputEnabled = true;
-                    return;
+                    if (!File.Exists(GoogleVisionSettings.CredentialFileLocation))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The Google Cloud credential file has not been chosen or does not exist.  Please select a credential file.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    if (!CVClientCommon.Google_MayBeAValidCredentialFile(GoogleVisionSettings.CredentialFileLocation))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The Google Cloud credential file is invalid.  Please select a valid credential file.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    gvClient.GoogleCloudCredentialsFile = GoogleVisionSettings.CredentialFileLocation;
                 }
 
-                gvClient.GoogleCloudCredentialsFile = gcsCredentialFileLocation;
-                gvClient.MaxThreads = Utilities.ReadConfig().MaxConcurrentAPICalls;
+                if (isMicrosoftAuzreEnabled)
+                {
+                    if (string.IsNullOrEmpty(MicrosoftAzureSettings.SubscriptionKey))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The Microsoft Azure subscription key is missing.  Please provide a subscription key.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    gvClient.MicrosoftAzureSubscriptionKey = MicrosoftAzureSettings.SubscriptionKey;
+
+                    if (!Uri.IsWellFormedUriString(MicrosoftAzureSettings.Endpoint, UriKind.Absolute))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The Microsoft Azure Cognitive Services endpoint is invalid.  Please provide a valid endpoint.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    gvClient.MicrosoftAzureEndpoint = MicrosoftAzureSettings.Endpoint;
+                }
+
+                if (isClarifaiEnabled)
+                {
+                    if (string.IsNullOrEmpty(ClarifaiSettings.APIKey))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The Clarifai API key is missing.  Please provide an API key.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    gvClient.ClarifaiApiKey = ClarifaiSettings.APIKey;
+                }
+
+                if (isOpenSourceEnabled)
+                {
+                    if (!Uri.IsWellFormedUriString(OpenSourceSettings.Endpoint, UriKind.Absolute))
+                    {
+                        Utilities.ShowErrorDialog("API settings", "The open source API endpoint is missing.  Please provide a valid endpoint.", Parent);
+                        IsInputEnabled = true;
+                        return;
+                    }
+
+                    gvClient.OpenSourceApiEndpoint = OpenSourceSettings.Endpoint;
+                }
 
                 if (File.Exists(outputJsonFileLocation) || File.Exists(outputCsvFileLocation))
                 {
@@ -193,19 +301,47 @@ namespace Memespector_GUI
                     return;
                 }
 
-                var featureDetecitonList = getSelectedFeatures();
-                var featureMaxResults = Utilities.GetConfigFeaturesMaxResults();
-                var flatteningMinScores = Utilities.GetConfigFlatteningMinScores();
+                var googleVisionFeatureList = getSelectedGoogleVisionFeatures();
+                var googleVisionMaxResults = Utilities.GetConfigGoogleVisionMaxResults();
+                var googleVisionMinScores = Utilities.GetConfigGoogleVisionFlatteningMinScores();
 
-                var gvTaskList = new List<GVTask>();
+                var microsoftAuzreFeatureList = getSelectedMicrosoftAzureFeatures();
+                var microsoftAzureMinScores = Utilities.GetConfigMicrosoftAzureFlatteningMinScores();
+
+                var memespecotrConfig = Utilities.MemespectorConfig;
+
+                gvClient.ParallelCVImageTasksToRun = memespecotrConfig.MaxConcurrentImageTasks;
+
+                var gvTaskList = new List<CVImageTask>();
 
                 foreach (var fileLocation in imageFileLocations)
                 {
-                    var gvTask = new GVTask() { ImageLocation = fileLocation, DetectionFeatureTypes = featureDetecitonList, FeatureMaxResults = featureMaxResults, FlatteningMinScores = flatteningMinScores };
+                    var gvTask = new CVImageTask() { ImageLocation = fileLocation };
+
+                    if (isGoogleVisionEnabled)
+                    {
+                        gvTask.GoogleInvocation = new InvocationGoogle() { DetectionFeatureTypes = googleVisionFeatureList, DetectionMaxResults = googleVisionMaxResults, FlatteningMinScores = googleVisionMinScores };
+                    }
+
+                    if (isMicrosoftAuzreEnabled)
+                    {
+                        gvTask.AzureInvocation = new InvocationAzure() { DetectionFeatureTypes = microsoftAuzreFeatureList, FlatteningMinScores = microsoftAzureMinScores };
+                    }
+
+                    if (isClarifaiEnabled)
+                    {
+                        gvTask.ClarifaiInvocation = new InvocationClarifai() { Model = ClarifaiSettings.Model, FlatteningMinScore = memespecotrConfig.ClarifaiMinScore };
+                    }
+
+                    if (isOpenSourceEnabled)
+                    {
+                        gvTask.OpenSourceInvocation = new InvocationOpenSource() { Model = OpenSourceSettings.Model, DetectionMaxResults = memespecotrConfig.OpenSourceMaxResults, FlatteningMinScore = memespecotrConfig.OpenSourceMinScore };
+                    }
+
                     if (Utilities.IsFilePath(gvTask.ImageLocation))
-                        gvTask.ImageLocationType = GVTask.LocationType.Local;
+                        gvTask.ImageLocationType = CVClientCommon.LocationType.Local;
                     else if (Utilities.IsUrl(gvTask.ImageLocation))
-                        gvTask.ImageLocationType = GVTask.LocationType.Uri;
+                        gvTask.ImageLocationType = CVClientCommon.LocationType.Uri;
 
                     gvTaskList.Add(gvTask);
                 }
@@ -218,72 +354,69 @@ namespace Memespector_GUI
                     int processed = 0;
                     do
                     {
-                        processed = gvTaskList.Count(t => t.Processed.HasValue);
+                        processed = gvTaskList.Count(t => t.Completed.HasValue);
                         ProgressValue = Convert.ToInt32(Convert.ToDouble(processed) / Convert.ToDouble(total) * 100);
                         ProgressMessage = $"Processed {processed.ToString()} of {total.ToString()}";
                         System.Threading.Thread.Sleep(200);
                     } while (!((processed >= total) || !IsInvocationInProgress));
                 });
 
-                var gvTaskResults = await gvClient.AnnotateImages(gvTaskList);
+                var gvTaskResults = await gvClient.RunTasks(gvTaskList);
 
                 File.WriteAllText(outputJsonFileLocation, JsonConvert.SerializeObject(gvTaskResults, Formatting.Indented));
-                File.WriteAllText(OutputCsvFileLocation, CsvSerializer.SerializeToCsv(gvTaskResults.Select(t => t.FlatAnnotationResult)));
+                File.WriteAllText(OutputCsvFileLocation, CsvSerializer.SerializeToCsv(gvTaskResults.Select(t => t.FlatResults)));
 
                 IsInputEnabled = true;
                 IsInvocationInProgress = false;
 
-                Utilities.ShowInfoDialog("Completion", "All images have been processed by the API.  Open the result files to see the details.", Parent);
+                Utilities.ShowInfoDialog("Completion", "All images have been processed by the APIs.  Open the result files to see the details.", Parent);
             }
 
         }
 
+
         private async void doBrowseFile(string forProperty)
         {
-
             if (forProperty == "GCSCredentialFileLocation")
             {
-                var openFileDialog = new OpenFileDialog() { Title = "Open Google Cloud credential file", AllowMultiple = false, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "JSON", Extensions = { "json" } } }, Directory = userDataPath };
+                var openFileDialog = new OpenFileDialog() { Title = "Open Google Cloud credential file", AllowMultiple = false, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "JSON", Extensions = { "json" } } }, Directory = defaultDataPath };
                 var files = await openFileDialog.ShowAsync(Parent);
                 if (files.Any())
                 {
                     string filename = files.First();
-                    GCSCredentialFileLocation = filename;
-
-                    var config = Utilities.ReadConfig();
-                    config.GCSCredentialFileLocation = filename;
-                    Utilities.WriteConfig(config);
+                    GoogleVisionSettings.CredentialFileLocation = filename;
                 }
             }
             else if (forProperty == "OutputJsonFileLocation")
             {
-                var saveFileDialog = new SaveFileDialog() { Title = "Save detailed results as JSON", InitialFileName = Path.GetFileName(OutputJsonFileLocation), Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "JSON", Extensions = { "json" } } }, Directory = userDataPath };
+                var saveFileDialog = new SaveFileDialog() { Title = "Save detailed results as JSON", InitialFileName = Path.GetFileName(OutputJsonFileLocation), Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "JSON", Extensions = { "json" } } }, Directory = defaultDataPath };
                 var file = await saveFileDialog.ShowAsync(Parent);
                 if (!string.IsNullOrEmpty(file))
                     OutputJsonFileLocation = file;
             }
             else if (forProperty == "OutputCsvFileLocation")
             {
-                var saveFileDialog = new SaveFileDialog() { Title = "Save simplified results as CSV", InitialFileName = Path.GetFileName(OutputCsvFileLocation), Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "CSV", Extensions = { "csv" } } }, Directory = userDataPath };
+                var saveFileDialog = new SaveFileDialog() { Title = "Save simplified results as CSV", InitialFileName = Path.GetFileName(OutputCsvFileLocation), Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "CSV", Extensions = { "csv" } } }, Directory = defaultDataPath };
                 var file = await saveFileDialog.ShowAsync(Parent);
                 if (!string.IsNullOrEmpty(file))
                     OutputCsvFileLocation = file;
             }
             else if (forProperty.StartsWith("ImageFileLocations_"))
             {
-                var imageExtensions = GVCommon.GVSupportedFormats;
+                var imageExtensions = CVClientCommon.SupportedFormats;
                 string[] files = new string[] { };
 
                 if (forProperty.EndsWith("_Files"))
                 {
-                    var openFileDialog = new OpenFileDialog() { Title = "Open image files", AllowMultiple = true, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Image", Extensions = imageExtensions } }, Directory = userDataPath };
+                    var openFileDialog = new OpenFileDialog() { Title = "Open image files", AllowMultiple = true, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Image", Extensions = imageExtensions } }, Directory = defaultDataPath };
                     files = await openFileDialog.ShowAsync(Parent);
                 }
                 else if (forProperty.EndsWith("_Folder"))
                 {
-                    var openFolderDialog = new OpenFolderDialog() { Title = "Open a folder containing images", Directory = userDataPath };
+                    var openFolderDialog = new OpenFolderDialog() { Title = "Open a folder containing images", Directory = defaultDataPath };
                     var folderPath = await openFolderDialog.ShowAsync(Parent);
-                    files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories).Where(f => imageExtensions.Any(ext => f.ToLower().EndsWith("." + ext))).ToArray();
+                    if (Directory.Exists(folderPath))
+                        files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories).Where(f => imageExtensions.Any(ext => f.ToLower().EndsWith("." + ext))).ToArray();
                 }
 
                 if (files.Any())

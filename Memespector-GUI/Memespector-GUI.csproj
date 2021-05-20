@@ -5,9 +5,10 @@
     <Nullable>enable</Nullable>
     <ApplicationIcon>Assets\Google-Noto-Emoji-eye.ico</ApplicationIcon>
     <Authors>Jason Chao</Authors>
-    <AssemblyVersion>0.0.0.1</AssemblyVersion>
-    <FileVersion>0.0.0.1</FileVersion>
-    <Version>0.0.1</Version>
+    <AssemblyVersion>0.0.2.1</AssemblyVersion>
+    <FileVersion>0.0.2.1</FileVersion>
+    <Version>0.2.1</Version>
+    <PackageProjectUrl>https://github.com/jason-chao/memespector-gui</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\Google-Noto-Emoji-eye.ico" />
@@ -16,18 +17,18 @@
     <EmbeddedResource Include="Assets\Google-Noto-Emoji-eye.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
-    <PackageReference Include="Google.Cloud.Vision.V1" Version="2.2.0">
+    <PackageReference Include="Avalonia" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.4" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.4" />
+    <PackageReference Include="Google.Cloud.Vision.V1" Version="2.3.0">
       <GeneratePathProperty>true</GeneratePathProperty>
     </PackageReference>
-    <PackageReference Include="MessageBox.Avalonia" Version="1.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="ServiceStack.Text" Version="5.10.4" />
+    <PackageReference Include="MessageBox.Avalonia" Version="1.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ServiceStack.Text" Version="5.11.0" />
    </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GVClient\ResearchGVClient.csproj" />
+    <ProjectReference Include="..\CVClient\CVClient.csproj" />
   </ItemGroup>
 </Project>

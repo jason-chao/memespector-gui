@@ -24,6 +24,7 @@ namespace Memespector_GUI
         {
             var viewModel = this.DataContext as MainWindowViewModel;
             if (viewModel != null)
+            {
                 if (viewModel.IsInvocationInProgress)
                 {
                     e.Cancel = true;
@@ -33,6 +34,12 @@ namespace Memespector_GUI
                         System.Environment.Exit(0);
                     }
                 }
+            }
+        }
+
+        private void resetComboBoxSelectedIndex(object sender, SelectionChangedEventArgs args)
+        {
+            (sender as ComboBox).SelectedItem = null;
         }
     }
 }

@@ -1,0 +1,38 @@
+[
+  {
+    "Title": "General",
+    "ModelId": "aaa03c23b3724a16a56b629203edc62c"
+  },
+  {
+    "Title": "Apparel",
+    "ModelId": "e0be3b9d6a454f0493ac3a30784001ff"
+  },
+  {
+    "Title": "Celebrity",
+    "ModelId": "e466caa0619f444ab97497640cefc4dc"
+  },
+  {
+    "Title": "Color",
+    "ModelId": "eeed0b6733a644cea07cf4c60f87ebb7"
+  },
+  {
+    "Title": "Food",
+    "ModelId": "bd367be194cf45149e75f01d59f77ba7"
+  },
+  {
+    "Title": "Moderation",
+    "ModelId": "d16f390eb32cad478c7ae150069bd2c6"
+  },
+  {
+    "Title": "NSFW",
+    "ModelId": "e9576d86d2004ed1a38ba0cf39ecb4b1"
+  },
+  {
+    "Title": "Textures and Patterns",
+    "ModelId": "fbefb47f9fdb410e8ce14f24f54b47ff"
+  },
+  {
+    "Title": "Travel",
+    "ModelId": "eee28c313d69466f836ab83287a54ed9"
+  }
+]
