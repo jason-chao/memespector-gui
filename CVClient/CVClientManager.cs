@@ -14,7 +14,7 @@ namespace CVClient
         }
 
         public int parallelCVImageTasksToRun = Environment.ProcessorCount;
-        public int ParallelCVImageTasksToRun { get => parallelCVImageTasksToRun; set { if (value > 0) parallelCVImageTasksToRun = 0;  } }
+        public int ParallelCVImageTasksToRun { get => parallelCVImageTasksToRun; set { if (value > 0) parallelCVImageTasksToRun = value;  } }
 
         private string googleCloudCredentialsFilePath = string.Empty;
         private string microsoftAzureEndpoint = string.Empty;
@@ -68,7 +68,7 @@ namespace CVClient
 
             List<Task> tasks = new List<Task>();
 
-            for (int n = 0; n < ParallelCVImageTasksToRun; n++)
+            for (int n = 0; n < parallelCVImageTasksToRun; n++)
             {
                 tasks.Add(Task.Run(() =>
                 {
