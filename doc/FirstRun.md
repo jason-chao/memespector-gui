@@ -4,6 +4,10 @@ When you open Memespector-GUI for the first time on Windows or Mac, the operatin
 
 Usually, you will only need to take these extra steps once.  Next time, Memespector-GUI should run without further hindrance. 
 
+## Operating system-specific instructions
+* [Windows](#on-windows)
+* [Mac](#on-mac)
+
 ## On Windows
 
 After extracting the zip file, you will see the file `Memespector-GUI.exe` with an eye's icon. (Note: The file extension .exe may be hidden depending on the settings.)  Double click on it to open Memespector-GUI.
