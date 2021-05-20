@@ -11,7 +11,7 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
   * Get authentication keys from
     * [Google Vision](doc/GetKeyFromGoogleCloud.md)
     * [Microsoft Azure Cognitive Services](doc/GetKeyFromMicrosoftAzure.md)
-    * [Clarifai Computer Vision](doc/GetKeyFromClarifai.md)
+    * [Clarifai](doc/GetKeyFromClarifai.md)
 * [Usage](#usage)
   * [Change API settings](#change-api-settings)
     * [Google Vision](#google-vision)
@@ -125,7 +125,7 @@ Check the box for `Open Source`.
 
 #### Select the convolutional neural network (only if necessary)
 
-All the models were trained on [ImageNet](https://www.image-net.org/) database.  Just leave the default settings unchanged unless you want to study these models.  The differences between them are in the construction of convolutional neural networks.  If interested in the details, see [here](https://keras.io/api/applications/). 
+The open source models are made available by machine learning library [Keras](https://keras.io/api/applications/).  These models were trained on [ImageNet database](https://www.image-net.org/) .  Just leave the default settings unchanged unless you want to study these models.  The differences between them are in the construction of convolutional neural networks.  If interested in the details, see [here](https://keras.io/api/applications/). 
 
 ![screenshot](doc/res/gui-os-model-selection.jpg)
 
