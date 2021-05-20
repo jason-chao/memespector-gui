@@ -24,6 +24,8 @@ When you open Memespector-GUI for the first time on Windows or Mac, the operatin
 
 ## Change API settings
 
+![Screenshot](doc/res/gui-win-settings.jpg)
+
 ### Google Vision
 
 #### Select the credential key file
