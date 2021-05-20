@@ -23,7 +23,7 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
     * [Images on the web](#images-on-the-web)
   * [Edit the names for output files](#edit-the-names-for-output-files)
   * [Invoke the APIs](#invoke-the-apis)
-  * [Credits](#credits)
+* [Credits](#credits)
 
 # Set-up
 
