@@ -1,13 +1,14 @@
 # Memespector-GUI
 
-Memespector-GUI is a cross-platform client for computer vision APIs with a graphical user interface.  Memespector-GUI supports [Google Cloud Vision API](https://cloud.google.com/vision/), [Microsoft Azure Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/), [Clarifai Computer Vision](https://www.clarifai.com/) and an API for open soruce computer vision models.
+Memespector-GUI is a cross-platform client for computer vision APIs with a graphical user interface.  Memespector-GUI supports [Google Cloud Vision API](https://cloud.google.com/vision/), [Microsoft Azure Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/), [Clarifai Computer Vision](https://www.clarifai.com/) and an API for [Keras' built-in open source models](https://keras.io/api/applications/).
 
 Memespector-GUI runs on Windows, Mac OS and Linux.
 
 ![Screenshot](doc/res/memespector-gui-screenshot-mac.png)
 
 # Contents
-* [Set-up](#set-up)
+* [Download](#download)
+* [Gaining access to APIs](#gaining-access-to-apis)
   * Get authentication keys from
     * [Google Vision](doc/GetKeyFromGoogleCloud.md)
     * [Microsoft Azure Cognitive Services](doc/GetKeyFromMicrosoftAzure.md)
@@ -25,19 +26,21 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
   * [Invoke the APIs](#invoke-the-apis)
 * [Credits](#credits)
 
-# Set-up
+# Download
 
-1. Download [the latest release](https://github.com/jason-chao/memespector-gui/releases/) for Windows, Mac OS or Linux.
+Downlaod [the latest version of Memespector-GUI for Windows, Mac OS or Linux](https://github.com/jason-chao/memespector-gui/releases/).
 
-2. You have to get authentication keys from Google Cloud, Microsoft Azure and Clarifai in order to use their APIs.
+When you open Memespector-GUI for the first time on Windows or Mac, the operating system may decline to run Memespector-GUI because of tightened security measures.  If this happens, please follow [the instructions on how to unblock Memespector-GUI at first launch on Windows and Mac](doc/FirstRun.md).
 
-   1. If you wish to use Google Vision API, you must obtain a credential key file from Google Cloud.  See [the instructions on how to activate Google Cloud Service and obtain an authentication file](doc/GetKeyFromGoogleCloud.md).
-   2. If you wish to use Microsoft Azure Cognitive Services Computer Vision, you must obtain a service endpoint and subscription key from Microsoft Azure.  See [the instructions on how to activate Microsoft Azure and obtain authentication keys](doc/GetKeyFromMicrosoftAzure.md).
-   3. If you wish to use Clarifai Computer Vision, you must obtain an API key from Clarifai. See [the instructions on how to obtain an API key](doc/GetKeyFromClarifai.md).  
+# Gaining access to APIs
+
+You have to get authentication keys from Google Cloud, Microsoft Azure and Clarifai in order to use their APIs.
+
+1. If you wish to use **Google Vision API**, you must obtain a credential key file from Google Cloud.  See [the instructions on how to activate Google Cloud Service and obtain an authentication file](doc/GetKeyFromGoogleCloud.md).
+2. If you wish to use **Microsoft Azure Cognitive Services Computer Vision**, you must obtain a service endpoint and subscription key from Microsoft Azure.  See [the instructions on how to activate Microsoft Azure and obtain authentication keys](doc/GetKeyFromMicrosoftAzure.md).
+3. If you wish to use **Clarifai**, you must obtain an API key from Clarifai. See [the instructions on how to obtain an API key from Clarifai](doc/GetKeyFromClarifai.md).  
 
 # Usage
-
-When you open Memespector-GUI for the first time on Windows or Mac, the operating system may decline to run Memespector-GUI because of tightened security measures.  If this happens, please follow [the instructions to allow Memespector-GUI to run at first launch on Windows and Mac](doc/FirstRun.md).
 
 *Note:  The graphical user interfaces of Memespsector-GUI are nearly identical across the Windows, Mac and Linux versions.  For illustrative purpose, the screenshots of the Windows version are used in this document.  The following steps also apply to the Mac and Linux versions of Memespector-GUI.*
 
@@ -95,7 +98,7 @@ Check the features that you want Microsoft Azure Cognitive Services to detect in
 
 ### Clarifai 
 
-Check the box for `Clarifai`.  Paste the API key you obtained from Clarifai into the `API key` box.  See [the detailed instructions on how to obtain an endpoint and a subscription key from Microsoft Azure](doc/GetKeyFromClarifai.md#obtaining-an-api-key).
+Check the box for `Clarifai`.  Paste the API key you obtained from Clarifai into the `API key` box.  See [the detailed instructions on how to obtain an API key from Clarifai](doc/GetKeyFromClarifai.md#obtaining-an-api-key).
 
 ![screenshot](doc/res/gui-cl-api-key-field.jpg)
 
@@ -125,7 +128,7 @@ Check the box for `Open Source`.
 
 #### Select the convolutional neural network (only if necessary)
 
-The open source models are made available by machine learning library [Keras](https://keras.io/api/applications/).  These models were trained on [ImageNet database](https://www.image-net.org/) .  Just leave the default settings unchanged unless you want to study these models.  The differences between them are in the construction of convolutional neural networks.  If interested in the details, see [here](https://keras.io/api/applications/). 
+The open source models are made available by machine learning library [Keras](https://keras.io/).  These models were trained on the [ImageNet database](https://www.image-net.org/).  Just leave the default option unchanged unless you want to study these models.  The differences between them are in the construction of convolutional neural networks.  If interested in the details, see [here](https://keras.io/api/applications/). 
 
 ![screenshot](doc/res/gui-os-model-selection.jpg)
 
