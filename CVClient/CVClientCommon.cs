@@ -1,9 +1,9 @@
-﻿using System;
+﻿// #define DEBUG_DONOTINVOKEREALAPI
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using ServiceStack.Text;
 using System.Linq;
 using System.Reflection;
@@ -80,7 +80,7 @@ namespace CVClient
         static public void SimulateAPIInvocation()
         {
             Random rand = new Random();
-            System.Threading.Thread.Sleep(rand.Next(5000, 15000));
+            System.Threading.Thread.Sleep(rand.Next(3000, 15000));
             throw new Exception("A deliberate exception to end the task for debugging purposes");
         }
 #endif

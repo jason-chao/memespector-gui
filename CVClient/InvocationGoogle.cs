@@ -1,10 +1,10 @@
-﻿using System;
+﻿// #define DEBUG_DONOTINVOKEREALAPI
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Google.Cloud.Vision.V1;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace CVClient
 {
@@ -55,7 +55,7 @@ namespace CVClient
 #endif
 
 #if DEBUG_DONOTINVOKEREALAPI
-                    CVCommon.SimulateAPIInvocation();
+                    CVClientCommon.SimulateAPIInvocation();
 #endif
                 }
                 catch (Exception ex)

@@ -62,7 +62,7 @@ namespace CVClient
             return true;
         }
 
-        public async Task<IEnumerable<CVImageTask>> RunTasks(IEnumerable<CVImageTask> cvImageTasks)
+        public async Task RunTasks(IEnumerable<CVImageTask> cvImageTasks)
         {
             var queue = new ConcurrentQueue<int>(Enumerable.Range(0, cvImageTasks.Count()));
 
@@ -86,8 +86,6 @@ namespace CVClient
                 await concurrentTasks;
             }
             catch { }
-
-            return cvImageTasks;
         }
 
     }

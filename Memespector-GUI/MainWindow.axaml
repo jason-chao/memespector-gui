@@ -137,7 +137,7 @@
     <Border Background="DarkOrange" Grid.Row="11" Grid.Column="0" Padding="0, 10, 0, 10">
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
         <Button Content="About" Command="{Binding ShowMessageBox}" CommandParameter="About" Foreground="White" Background="DarkOrange" Padding="0, 0, 0, 0" Margin="0, 0, 20, 0" />
-        <Button Content="Github" Command="{Binding OpenExternal}" CommandParameter="Github" Foreground="White" Background="DarkOrange" Padding="0, 0, 0, 0" Margin="0, 0, 30, 0" />
+        <Button Content="User Manual" Command="{Binding OpenExternal}" CommandParameter="Github" Foreground="White" Background="DarkOrange" Padding="0, 0, 0, 0" Margin="0, 0, 30, 0" />
       </StackPanel>
     </Border>
   </Grid>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define DEBUG_DONOTINVOKEREALAPI
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -88,7 +90,7 @@ namespace CVClient
 #endif
 
 #if DEBUG_DONOTINVOKEREALAPI
-                    CVCommon.SimulateAPIInvocation();
+                    CVClientCommon.SimulateAPIInvocation();
 #endif
                 }
                 catch (Exception ex)

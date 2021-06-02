@@ -82,6 +82,8 @@ namespace Memespector_GUI
         private bool isInputEnabled = true;
         public bool IsInputEnabled { get => isInputEnabled; set => this.RaiseAndSetIfChanged(ref isInputEnabled, value); }
 
+        private object outputFileIO = new object();
+
         private void saveUIStateToConfig()
         {
             var config = Utilities.MemespectorConfig;
@@ -348,26 +350,58 @@ namespace Memespector_GUI
                 {
                     int total = gvTaskList.Count;
                     int processed = 0;
+                    int written = 0;
+                    DateTime lastWritten = DateTime.Now;
                     do
                     {
                         processed = gvTaskList.Count(t => t.Completed.HasValue);
+                        if (processed > written)
+                        {
+                            if ((DateTime.Now - lastWritten).TotalSeconds > memespecotrConfig.MinWriteResultsIntervalInSeconds)
+                            {
+                                writeResultsToOutputFiles(gvTaskList);
+                                written = processed;
+                                lastWritten = DateTime.Now;
+                            }
+                        }
                         ProgressValue = Convert.ToInt32(Convert.ToDouble(processed) / Convert.ToDouble(total) * 100);
                         ProgressMessage = $"Processed {processed.ToString()} of {total.ToString()}";
-                        System.Threading.Thread.Sleep(200);
+                        System.Threading.Thread.Sleep(memespecotrConfig.MinUIProgressUpdateIntervalInMilliseconds);
                     } while (!((processed >= total) || !IsInvocationInProgress));
                 });
 
-                var gvTaskResults = await gvClient.RunTasks(gvTaskList);
+                bool completed = false;
+                Exception? runTaskException = null;
 
-                File.WriteAllText(outputJsonFileLocation, JsonConvert.SerializeObject(gvTaskResults, Formatting.Indented));
-                File.WriteAllText(OutputCsvFileLocation, CsvSerializer.SerializeToCsv(gvTaskResults.Select(t => t.FlatResults)));
+                try
+                {
+                    await gvClient.RunTasks(gvTaskList);
+                    completed = true;
+                }
+                catch (Exception ex) { runTaskException = ex; }
+                finally { writeResultsToOutputFiles(gvTaskList); }
 
                 IsInputEnabled = true;
                 IsInvocationInProgress = false;
 
-                Utilities.ShowInfoDialog("Completion", "All images have been processed by the APIs.  Open the result files to see the details.", Parent);
+                if (completed)
+                    Utilities.ShowInfoDialog("Completion", "All images have been processed by the APIs.  Open the result files to see the details.", Parent);
+                else
+                {
+                    string exceptionMessage = (runTaskException != null) ? Environment.NewLine + Environment.NewLine + "Technical message: " + runTaskException.Message + $" ({runTaskException.Source})" : string.Empty;
+                    Utilities.ShowInfoDialog("Completion", $"Some images may NOT have been processed.  Open the result files to see the details.{exceptionMessage}", Parent);
+                }
             }
 
+        }
+
+        private void writeResultsToOutputFiles(IEnumerable<CVImageTask> cvImageTasks)
+        {
+            lock (outputFileIO)
+            {
+                File.WriteAllText(outputJsonFileLocation, JsonConvert.SerializeObject(cvImageTasks, Formatting.Indented));
+                File.WriteAllText(OutputCsvFileLocation, CsvSerializer.SerializeToCsv(cvImageTasks.Select(t => t.FlatResults)));
+            }
         }
 
 
