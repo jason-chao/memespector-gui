@@ -63,8 +63,8 @@ namespace Memespector_GUI
         private bool isOpenSourceEnabled = Utilities.MemespectorConfig.SelectedOpenSource;
         public bool IsOpenSourceEnabled { get => isOpenSourceEnabled; set => this.RaiseAndSetIfChanged(ref isOpenSourceEnabled, value); }
 
-        private string imageFileLocations = string.Empty;
-        public string ImageFileLocations { get => imageFileLocations; set => this.RaiseAndSetIfChanged(ref imageFileLocations, value); }
+        private string imageSources = string.Empty;
+        public string ImageSources { get => imageSources; set => this.RaiseAndSetIfChanged(ref imageSources, value); }
         private string outputJsonFileLocation = string.Empty;
         public string OutputJsonFileLocation { get => outputJsonFileLocation; set => this.RaiseAndSetIfChanged(ref outputJsonFileLocation, value); }
         private string outputCsvFileLocation = string.Empty;
@@ -102,9 +102,9 @@ namespace Memespector_GUI
             Utilities.WriteConfig(config);
         }
 
-        private void cleanimageFileLocationList()
+        private void cleanImageSourceList()
         {
-            ImageFileLocations = string.Join(Environment.NewLine, imageFileLocations.Split(Environment.NewLine).Select(l => l.Trim()).Distinct().Where(l => (Utilities.IsFilePath(l) || Utilities.IsUrl(l)) && !string.IsNullOrEmpty(l)));
+            ImageSources = string.Join(Environment.NewLine, imageSources.Split(Environment.NewLine).Select(l => l.Trim()).Distinct().Where(l => (Utilities.IsFilePath(l) || Utilities.IsFolderPath(l) || Utilities.IsUrl(l)) && !string.IsNullOrEmpty(l)));
         }
 
         private void doOpenExternal(string parameter)
@@ -119,7 +119,7 @@ namespace Memespector_GUI
         {
             if (parameter == "WebImages")
             {
-                Utilities.ShowInfoDialog("Add images from the web", $"Please copy the URLs of the images and paste them into the box.{Environment.NewLine + Environment.NewLine}Please put one URL per line.  You may press ENTER to create a new line.", Parent);
+                Utilities.ShowInfoDialog("Add images from the web", $"If you are going to add hundreds or even thousands of images from the web, please copy the URLs of the images and paste them into a text file (.txt).  Then, add the text file into the box using the 'a text file containing image locations' button.{Environment.NewLine + Environment.NewLine}If you are going to add tens of or just a few images from the web, please paste the URLs directly into the box.  Put one URL per line.  You may press ENTER to create a new line.", Parent);
             }
             else if (parameter == "About")
             {
@@ -288,11 +288,11 @@ namespace Memespector_GUI
                     }
                 }
 
-                cleanimageFileLocationList();
+                cleanImageSourceList();
 
-                var imageFileLocations = this.imageFileLocations.Split(Environment.NewLine).Where(l => !string.IsNullOrEmpty(l));
+                var effecitveImageLocations = getEffectiveImageLocations(this.imageSources.Split(Environment.NewLine));
 
-                if (!imageFileLocations.Any())
+                if (!effecitveImageLocations.Any())
                 {
                     Utilities.ShowErrorDialog("Image locations", "Please provide valid locations of image files on this computer or on the web.", Parent);
                     IsInputEnabled = true;
@@ -312,7 +312,7 @@ namespace Memespector_GUI
 
                 var gvTaskList = new List<CVImageTask>();
 
-                foreach (var fileLocation in imageFileLocations)
+                foreach (var fileLocation in effecitveImageLocations)
                 {
                     var gvTask = new CVImageTask() { ImageLocation = fileLocation };
 
@@ -404,6 +404,46 @@ namespace Memespector_GUI
             }
         }
 
+        private IEnumerable<string> getEffectiveImageLocations(IEnumerable<string> locations)
+        {
+            var effecitveLocationList = new List<string>();
+            var imageExtensions = CVClientCommon.SupportedFormats;
+
+            foreach (var location in locations)
+            {
+                if (string.IsNullOrEmpty(location))
+                    continue;
+
+                if (Utilities.IsFolderPath(location))
+                {
+                    if (!Directory.Exists(location))
+                        continue;
+
+                    var locationsInFolder = getEffectiveImageLocations(Directory.GetFiles(location, "*.*", SearchOption.AllDirectories).ToArray());
+                    effecitveLocationList.AddRange(locationsInFolder);
+                }
+                else if (Utilities.IsFilePath(location))
+                {
+                    if (!File.Exists(location))
+                        continue;
+
+                    if (location.ToLower().EndsWith(".txt"))
+                    {
+                        var locationsInFile = getEffectiveImageLocations(File.ReadAllLines(location));
+                        effecitveLocationList.AddRange(locationsInFile);
+                    }
+                    else if (imageExtensions.Any(ext => location.ToLower().EndsWith("." + ext)))
+                    {
+                        effecitveLocationList.Add(location);
+                    }
+                }
+                else if (Utilities.IsUrl(location))
+                    effecitveLocationList.Add(location); // IsURL must be the last case to be tested.  A file or folder path is also considered an absolute path.
+            }
+
+            return effecitveLocationList.Distinct();
+        }
+
 
         private async void doBrowseFile(string forProperty)
         {
@@ -434,25 +474,28 @@ namespace Memespector_GUI
             else if (forProperty.StartsWith("ImageFileLocations_"))
             {
                 var imageExtensions = CVClientCommon.SupportedFormats;
-                string[] files = new string[] { };
+                string[] localPaths = new string[] { };
 
                 if (forProperty.EndsWith("_Files"))
                 {
                     var openFileDialog = new OpenFileDialog() { Title = "Open image files", AllowMultiple = true, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Image", Extensions = imageExtensions } }, Directory = defaultDataPath };
-                    files = await openFileDialog.ShowAsync(Parent);
+                    localPaths = await openFileDialog.ShowAsync(Parent);
+                }
+                else if (forProperty.EndsWith("_Txt"))
+                {
+                    var openFileDialog = new OpenFileDialog() { Title = "Open a text file containing image locations", AllowMultiple = false, Filters = new List<FileDialogFilter> { new FileDialogFilter { Name = "Text", Extensions = new List<string>() { "txt" } } }, Directory = defaultDataPath };
+                    localPaths = await openFileDialog.ShowAsync(Parent);
                 }
                 else if (forProperty.EndsWith("_Folder"))
                 {
                     var openFolderDialog = new OpenFolderDialog() { Title = "Open a folder containing images", Directory = defaultDataPath };
-                    var folderPath = await openFolderDialog.ShowAsync(Parent);
-                    if (Directory.Exists(folderPath))
-                        files = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories).Where(f => imageExtensions.Any(ext => f.ToLower().EndsWith("." + ext))).ToArray();
+                    localPaths = new string[] { await openFolderDialog.ShowAsync(Parent) };
                 }
 
-                if (files.Any())
+                if (localPaths.Any())
                 {
-                    ImageFileLocations = string.Join(Environment.NewLine, files) + Environment.NewLine + ImageFileLocations;
-                    cleanimageFileLocationList();
+                    ImageSources = string.Join(Environment.NewLine, localPaths) + Environment.NewLine + ImageSources;
+                    cleanImageSourceList();
                 }
             }
         }

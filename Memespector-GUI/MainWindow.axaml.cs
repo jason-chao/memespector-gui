@@ -28,7 +28,7 @@ namespace Memespector_GUI
                 if (viewModel.IsInvocationInProgress)
                 {
                     e.Cancel = true;
-                    var dialogChoice = await Utilities.ShowOkCancelDialog("Invocation in progress", $"The images are being processed.  You WILL LOSE ALL THE RESULTS if you quit the application now.{System.Environment.NewLine + System.Environment.NewLine}Press \"OK\" if you are sure want to quit the application.", this);
+                    var dialogChoice = await Utilities.ShowOkCancelDialog("Invocation in progress", $"The images are being processed.  Some of the images will not be processed if you quit the application now.{System.Environment.NewLine + System.Environment.NewLine}Press \"OK\" if you are sure want to quit the application.", this);
                     if (dialogChoice == MessageBox.Avalonia.Enums.ButtonResult.Ok)
                     {
                         System.Environment.Exit(0);

@@ -81,6 +81,11 @@ namespace Memespector_GUI
             memespectorConfig = config;
         }
 
+        static public bool IsFolderPath(string filename)
+        {
+            return Directory.Exists(filename);
+        }
+
         static public bool IsFilePath(string filename)
         {
             return File.Exists(filename);

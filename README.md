@@ -138,13 +138,15 @@ The open source models are made available by machine learning library [Keras](ht
 
 ### Images on a computer
 
-Click `files on this computer`.  Select the image files.  Click `Open`.  The locations of the image files will be added to the `Image locations` box.
+Click `image files on this computer`.  Select the image files.  Click `Open`.  The locations of the image files will be added to the `Image Sources` box.
 
 ![Screenshot](doc/res/gui-win-individual-files.jpg)
 
 ![Screenshot](doc/res/gui-win-individual-file-locations.jpg)
 
-If you want to add all images inside a folder with many sub-folders which also contain images, click `a folder on this computer`.  Select the folder.  The locations of all image files inside the folder and its sub-folders will be added to the `Image locations` box.
+If you want to add all images inside a folder with many sub-folders which also contain images, click `a folder containing images on this computer`.  Select the folder.   The location of the folder will be added to the `Image Sources` box.
+
+*(Change of display behaviour from Version 0.2.3 beta: The full locations of image files inside the folder and sub-folders will NOT be displayed in the box.  However, the files will still be processed and do not need to be displayed in the box.  This change optimises memory utilisation.)*
 
 ![Screenshot](doc/res/gui-win-a-folder.jpg)
 
@@ -152,7 +154,17 @@ If you want to add all images inside a folder with many sub-folders which also c
 
 ### Images on the web
 
-Copy and paste the URLs of the images into the `Image locations` box.  Put one URL per line.
+If you are going to process hundreds or even thousands of URLs, paste the URLs into a text (.txt) file.  Put one URL per line.
+
+![Screenshot](doc/res/gui-web-urls-txt.jpg)
+
+![Screenshot](doc/res/gui-win-txt-file.jpg)
+
+Click `a text file containing image locations`.  Select the text file.  Click `Open`.  The location of the text file containing the URLs will be added to the `Image Sources` box.
+
+![Screenshot](doc/res/gui-win-a-txt-file-location.jpg)
+
+If you are going to just a few or tens of URLs, copy and paste the URLs of the images into the `Image Sources` box.  Put one URL per line.
 
 ![Screenshot](doc/res/gui-win-web-locations.jpg)
 
