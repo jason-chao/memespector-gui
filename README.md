@@ -146,15 +146,15 @@ Click `image files on this computer`.  Select the image files.  Click `Open`.  T
 
 If you want to add all images inside a folder with many sub-folders which also contain images, click `a folder containing images on this computer`.  Select the folder.   The location of the folder will be added to the `Image Sources` box.
 
-*(Change of display behaviour from Version 0.2.3 beta: The full locations of image files inside the folder and sub-folders will NOT be displayed in the box.  However, the files will still be processed and do not need to be displayed in the box.  This change optimises memory utilisation.)*
-
 ![Screenshot](doc/res/gui-win-a-folder.jpg)
 
 ![Screenshot](doc/res/gui-win-a-folder-locations.jpg)
 
+*(Change of display behaviour from Version 0.2.3 beta:  Only the location of the selected (outermost) folder will be displayed in the `Image Sources` box.  The locations of image files inside the folder (and its subfolders) do not have to be displayed in the box in order to be processed.  This change does not affect the total number of image files to be processed.)*
+
 ### Images on the web
 
-If you are going to process hundreds or even thousands of URLs, paste the URLs into a text (.txt) file.  Put one URL per line.
+If you are going to process hundreds or thousands of URLs, paste the URLs into a text (.txt) file.  Put one URL per line.
 
 ![Screenshot](doc/res/gui-web-urls-txt.jpg)
 

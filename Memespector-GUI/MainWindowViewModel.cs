@@ -63,8 +63,22 @@ namespace Memespector_GUI
         private bool isOpenSourceEnabled = Utilities.MemespectorConfig.SelectedOpenSource;
         public bool IsOpenSourceEnabled { get => isOpenSourceEnabled; set => this.RaiseAndSetIfChanged(ref isOpenSourceEnabled, value); }
 
-        private string imageSources = string.Empty;
-        public string ImageSources { get => imageSources; set => this.RaiseAndSetIfChanged(ref imageSources, value); }
+        private int imageSourcesCount = 0;
+        private IEnumerable<string> imageSources = new List<string>();
+        private string imageSourcesText = string.Empty;
+        public string ImageSourcesText {
+            get {
+                if (imageSourcesCount > (Utilities.MemespectorConfig.MaxUIImageSourceLinesToDisplay) && Utilities.MemespectorConfig.MaxUIImageSourceLinesToDisplay > 0)
+                    return string.Join(Environment.NewLine, imageSources.Take(Utilities.MemespectorConfig.MaxUIImageSourceLinesToDisplay)) + $"{Environment.NewLine}... [truncated for display purpose only - {imageSourcesCount} lines in total - all will be processed]";
+                else
+                    return imageSourcesText;
+            } set {
+                imageSources = value.Split(Environment.NewLine).Select(l => l.Trim()).Distinct().Where(l => (Utilities.IsFilePath(l) || Utilities.IsFolderPath(l) || Utilities.IsUrl(l)) && !string.IsNullOrEmpty(l));
+                imageSourcesCount = imageSources.Count();
+                this.RaiseAndSetIfChanged(ref imageSourcesText, string.Join(Environment.NewLine, imageSources));
+            }
+        }
+
         private string outputJsonFileLocation = string.Empty;
         public string OutputJsonFileLocation { get => outputJsonFileLocation; set => this.RaiseAndSetIfChanged(ref outputJsonFileLocation, value); }
         private string outputCsvFileLocation = string.Empty;
@@ -100,11 +114,6 @@ namespace Memespector_GUI
             config.SelectedOpenSource = isOpenSourceEnabled;
 
             Utilities.WriteConfig(config);
-        }
-
-        private void cleanImageSourceList()
-        {
-            ImageSources = string.Join(Environment.NewLine, imageSources.Split(Environment.NewLine).Select(l => l.Trim()).Distinct().Where(l => (Utilities.IsFilePath(l) || Utilities.IsFolderPath(l) || Utilities.IsUrl(l)) && !string.IsNullOrEmpty(l)));
         }
 
         private void doOpenExternal(string parameter)
@@ -288,9 +297,7 @@ namespace Memespector_GUI
                     }
                 }
 
-                cleanImageSourceList();
-
-                var effecitveImageLocations = getEffectiveImageLocations(this.imageSources.Split(Environment.NewLine));
+                var effecitveImageLocations = getEffectiveImageLocations(this.imageSources);
 
                 if (!effecitveImageLocations.Any())
                 {
@@ -494,8 +501,7 @@ namespace Memespector_GUI
 
                 if (localPaths.Any())
                 {
-                    ImageSources = string.Join(Environment.NewLine, localPaths) + Environment.NewLine + ImageSources;
-                    cleanImageSourceList();
+                    ImageSourcesText = string.Join(Environment.NewLine, localPaths) + Environment.NewLine + imageSourcesText;
                 }
             }
         }

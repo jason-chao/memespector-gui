@@ -26,6 +26,7 @@ namespace Memespector_GUI
 
         public int MinUIProgressUpdateIntervalInMilliseconds { get; set; } = 250;
         public int MinWriteResultsIntervalInSeconds { get; set; } = 15;
+        public int MaxUIImageSourceLinesToDisplay { get; set; } = 256;
 
         public float ClarifaiMinScore { get; set; } = 0;
         public float OpenSourceMinScore { get; set; } = 0;

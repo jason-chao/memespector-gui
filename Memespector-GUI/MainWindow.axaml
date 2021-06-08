@@ -109,7 +109,7 @@
       <Button Content="a text file containing image locations" IsEnabled="{Binding IsInputEnabled}" Command="{Binding BrowseFile}" CommandParameter="ImageFileLocations_Txt" FontSize="15" Margin="0, 0, 10, 0" />
       <Button Content="images on the web" FontSize="15" Command="{Binding ShowMessageBox}" CommandParameter="WebImages" IsEnabled="{Binding IsInputEnabled}" Margin="0, 0, 10, 0" />
     </StackPanel>
-    <TextBox Text="{Binding ImageSources}" IsReadOnly="{Binding !IsInputEnabled}" Grid.Row="5" VerticalAlignment="Stretch" AcceptsReturn="True" TextWrapping="Wrap" Margin="30, 10, 30, 0" />
+    <TextBox Text="{Binding ImageSourcesText}" IsReadOnly="{Binding !IsInputEnabled}" Grid.Row="5" VerticalAlignment="Stretch" AcceptsReturn="True" TextWrapping="Wrap" Margin="30, 10, 30, 0" />
     <Label FontSize="18" Grid.Row="6" Grid.Column="0" FontWeight="Bold" Content="Output" Margin="20, 20, 0, 0" />
     <Grid Grid.Row="7" Grid.Column="0">
       <Grid.ColumnDefinitions>
