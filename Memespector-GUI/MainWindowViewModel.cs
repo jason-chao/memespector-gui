@@ -297,7 +297,7 @@ namespace Memespector_GUI
                     }
                 }
 
-                var effecitveImageLocations = getEffectiveImageLocations(this.imageSources);
+                var effecitveImageLocations = getEffectiveImageLocations(this.imageSources, true);
 
                 if (!effecitveImageLocations.Any())
                 {
@@ -411,7 +411,7 @@ namespace Memespector_GUI
             }
         }
 
-        private IEnumerable<string> getEffectiveImageLocations(IEnumerable<string> locations)
+        private IEnumerable<string> getEffectiveImageLocations(IEnumerable<string> locations, bool parseTxt = false)
         {
             var effecitveLocationList = new List<string>();
             var imageExtensions = CVClientCommon.SupportedFormats;
@@ -426,7 +426,7 @@ namespace Memespector_GUI
                     if (!Directory.Exists(location))
                         continue;
 
-                    var locationsInFolder = getEffectiveImageLocations(Directory.GetFiles(location, "*.*", SearchOption.AllDirectories).ToArray());
+                    var locationsInFolder = getEffectiveImageLocations(Directory.GetFiles(location, "*.*", SearchOption.AllDirectories).ToArray(), false);
                     effecitveLocationList.AddRange(locationsInFolder);
                 }
                 else if (Utilities.IsFilePath(location))
@@ -434,9 +434,9 @@ namespace Memespector_GUI
                     if (!File.Exists(location))
                         continue;
 
-                    if (location.ToLower().EndsWith(".txt"))
+                    if (parseTxt && location.ToLower().EndsWith(".txt"))
                     {
-                        var locationsInFile = getEffectiveImageLocations(File.ReadAllLines(location));
+                        var locationsInFile = getEffectiveImageLocations(File.ReadAllLines(location), false);
                         effecitveLocationList.AddRange(locationsInFile);
                     }
                     else if (imageExtensions.Any(ext => location.ToLower().EndsWith("." + ext)))
