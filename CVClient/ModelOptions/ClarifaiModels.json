@@ -16,6 +16,14 @@
     "ModelId": "eeed0b6733a644cea07cf4c60f87ebb7"
   },
   {
+    "Title": "Demographics",
+    "ModelId": "c0c0ac362b03416da06ab3fa36fb58e3"
+  },
+  {
+    "Title": "Face Detection",
+    "ModelId": "a403429f2ddf4b49b307e318f00e528b"
+  },
+  {
     "Title": "Food",
     "ModelId": "bd367be194cf45149e75f01d59f77ba7"
   },
