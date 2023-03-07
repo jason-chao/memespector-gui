@@ -1,4 +1,4 @@
-# Memespector-GUI
+# Memespector-GUI [![DOI](https://zenodo.org/badge/333639175.svg)](https://zenodo.org/badge/latestdoi/333639175)
 
 Memespector-GUI is a cross-platform client for computer vision APIs with a graphical user interface.  Memespector-GUI supports [Google Cloud Vision API](https://cloud.google.com/vision/), [Microsoft Azure Cognitive Services](https://azure.microsoft.com/en-us/services/cognitive-services/computer-vision/), [Clarifai Computer Vision](https://www.clarifai.com/) and an API for [Keras' built-in open source models](https://keras.io/api/applications/).
 
@@ -6,7 +6,23 @@ Memespector-GUI runs on Windows, Mac OS and Linux.
 
 ![Screenshot](doc/res/memespector-gui-screenshot-mac.png)
 
-If you use this tool in a scientific scientific publication, please cite it, e.g. in APA style: *Chao, T. H. J. (2021). Memespector GUI: Graphical User Interface Client for Computer Vision APIs (Version 0.2) [Software]. Available from https://github.com/jason-chao/memespector-gui.*
+If you use this tool in your research, please cite it.
+### APA
+```
+Chao, J. (2023). Memespector-GUI: Graphical User Interface Client for Computer Vision APIs (Version 0.2.5) [Computer software]. https://doi.org/10.5281/zenodo.7704877
+```
+### BibTeX
+```
+@software{Chao_Memespector-GUI_Graphical_User_2023,
+author = {Chao, Jason},
+doi = {10.5281/zenodo.7704877},
+month = {3},
+title = {{Memespector-GUI: Graphical User Interface Client for Computer Vision APIs}},
+url = {https://github.com/jason-chao/memespector-gui},
+version = {0.2.5},
+year = {2023}
+}
+```
 
 # Contents
 * [Download](#download)
