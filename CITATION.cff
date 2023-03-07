@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Chao"
+  given-names: "Jason"
+  orcid: "https://orcid.org/0000-0001-8005-1227"
+title: "Memespector-GUI: Graphical User Interface Client for Computer Vision APIs"
+version: 0.2.5
+doi: 10.5281/zenodo.7704877
+date-released: 2023-03-07
+url: "https://github.com/jason-chao/memespector-gui"
